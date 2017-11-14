@@ -17,11 +17,33 @@ public class Main {
 
     public static void main(String[] args) {
 
-        staticFileLocation("/public.css");
+        staticFileLocation("/public");
 
         get("/", (req, res) -> {
             Map<String, String> model = new HashMap<>();
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
+
+        get("/index", (req, res) -> {
+            res.redirect("/");
+            return null;
+        });
+
+        get("/new", (req, res) ->{
+            Map<String, String> model = new HashMap<>();
+            return new ModelAndView(model, "new.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/detail", (req, res) -> {
+            Map<String, String> model = new HashMap<> ();
+            return new ModelAndView(model, "detail.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/edit", (req, res) -> {
+            Map<String, String> model = new HashMap<> ();
+            return new ModelAndView(model, "edit.hbs");
+        }, new HandlebarsTemplateEngine());
+
+
     }
 }
