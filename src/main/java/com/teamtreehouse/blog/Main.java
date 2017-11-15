@@ -1,5 +1,7 @@
 package com.teamtreehouse.blog;
 
+import com.teamtreehouse.blog.dao.SimpleBlogDao;
+import com.teamtreehouse.blog.model.BlogEntry;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
@@ -7,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static spark.Spark.get;
+import static spark.Spark.post;
 import static spark.Spark.staticFileLocation;
 
 /**
@@ -16,8 +19,8 @@ import static spark.Spark.staticFileLocation;
 public class Main {
 
     public static void main(String[] args) {
-
         staticFileLocation("/public");
+        SimpleBlogDao dao = new SimpleBlogDao();
 
         get("/", (req, res) -> {
             Map<String, String> model = new HashMap<>();
@@ -34,6 +37,15 @@ public class Main {
             return new ModelAndView(model, "new.hbs");
         }, new HandlebarsTemplateEngine());
 
+        post("/new", (req, res) ->{
+            String title = req.queryParams("title");
+            String body = req.queryParams("entry");
+            BlogEntry blogEntry = new BlogEntry(title, body);
+            dao.addEntry(blogEntry);
+            res.redirect("/");
+            return null;
+        });
+
         get("/detail", (req, res) -> {
             Map<String, String> model = new HashMap<> ();
             return new ModelAndView(model, "detail.hbs");
@@ -43,7 +55,6 @@ public class Main {
             Map<String, String> model = new HashMap<> ();
             return new ModelAndView(model, "edit.hbs");
         }, new HandlebarsTemplateEngine());
-
 
     }
 }
