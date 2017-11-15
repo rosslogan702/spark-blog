@@ -23,14 +23,24 @@ public class Main {
         SimpleBlogDao dao = new SimpleBlogDao();
 
         get("/", (req, res) -> {
-            Map<String, String> model = new HashMap<>();
+            Map<String, Object> model = new HashMap<>();
+            model.put("entries", dao.findAllEntries());
             return new ModelAndView(model, "index.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        get("/ideas", (req, res) -> {
+            Map<String, Object> model = new HashMap<>();
+            model.put("ideas", dao.findAll());
+            model.put("flashMessage", captureFlashMessage(req));
+            return new ModelAndView(model, "ideas.hbs");
         }, new HandlebarsTemplateEngine());
 
         get("/index", (req, res) -> {
             res.redirect("/");
             return null;
         });
+
+
 
         get("/new", (req, res) ->{
             Map<String, String> model = new HashMap<>();
