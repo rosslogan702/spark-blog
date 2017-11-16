@@ -1,5 +1,8 @@
 package com.teamtreehouse.blog.model;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,6 +17,7 @@ public class BlogEntry {
     private String title;
     private String body;
     private Set<Comment> comments;
+    private String time;
     //TODO: Add in the author?
     private String slug;
 
@@ -21,6 +25,7 @@ public class BlogEntry {
         this.title = title;
         this.body = body;
         comments = new HashSet<>();
+        time = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm").format(LocalDateTime.now());
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
     }
@@ -32,6 +37,8 @@ public class BlogEntry {
     public String getBody(){
         return body;
     }
+
+    public String getTime() { return time;}
 
     public String getSlug(){
         return slug;

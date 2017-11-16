@@ -5,6 +5,7 @@ import com.teamtreehouse.blog.model.BlogEntry;
 import spark.ModelAndView;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,29 +19,36 @@ import static spark.Spark.staticFileLocation;
 
 public class Main {
 
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+
     public static void main(String[] args) {
         staticFileLocation("/public");
         SimpleBlogDao dao = new SimpleBlogDao();
 
+        //Pre-populated dao for testing and for project where we need at least 3 projects
+        BlogEntry testEntryOne = new BlogEntry("Test 1", "This is a test");
+        BlogEntry testEntryTwo = new BlogEntry("Test 2", "This is a second test");
+        dao.addEntry(testEntryOne);
+        dao.addEntry(testEntryTwo);
+
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
             model.put("entries", dao.findAllEntries());
+            System.out.println("Num entries: " + dao.findAllEntries().size());
             return new ModelAndView(model, "index.hbs");
         }, new HandlebarsTemplateEngine());
 
-        get("/ideas", (req, res) -> {
-            Map<String, Object> model = new HashMap<>();
-            model.put("ideas", dao.findAll());
-            model.put("flashMessage", captureFlashMessage(req));
-            return new ModelAndView(model, "ideas.hbs");
-        }, new HandlebarsTemplateEngine());
+//        get("/ideas", (req, res) -> {
+//            Map<String, Object> model = new HashMap<>();
+//            model.put("ideas", dao.findAll());
+//            model.put("flashMessage", captureFlashMessage(req));
+//            return new ModelAndView(model, "ideas.hbs");
+//        }, new HandlebarsTemplateEngine());
 
         get("/index", (req, res) -> {
             res.redirect("/");
             return null;
         });
-
-
 
         get("/new", (req, res) ->{
             Map<String, String> model = new HashMap<>();
