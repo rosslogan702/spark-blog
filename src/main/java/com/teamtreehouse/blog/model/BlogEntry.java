@@ -3,10 +3,8 @@ package com.teamtreehouse.blog.model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+
 import com.github.slugify.Slugify;
 
 /**
@@ -16,7 +14,7 @@ public class BlogEntry {
 
     private String title;
     private String body;
-    private Set<Comment> comments;
+    private LinkedHashSet<Comment> comments;
     private String time;
     //TODO: Add in the author?
     private String slug;
@@ -24,7 +22,7 @@ public class BlogEntry {
     public BlogEntry(String title, String body){
         this.title = title;
         this.body = body;
-        comments = new HashSet<>();
+        comments = new LinkedHashSet<>();
         time = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm").format(LocalDateTime.now());
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
