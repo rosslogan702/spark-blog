@@ -4,6 +4,7 @@ import com.teamtreehouse.blog.dao.SimpleBlogDao;
 import com.teamtreehouse.blog.model.BlogEntry;
 import com.teamtreehouse.blog.model.Comment;
 import spark.ModelAndView;
+import spark.Request;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 
 import java.time.format.DateTimeFormatter;
@@ -11,9 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-import static spark.Spark.staticFileLocation;
+import static spark.Spark.*;
 
 /**
  * Created by Ross on 09/11/2017.
@@ -27,9 +26,30 @@ public class Main {
 
         staticFileLocation("/public");
         SimpleBlogDao dao = new SimpleBlogDao();
-
         //Pre-populated dao for testing and for project where we need at least 3 projects
         prepopulateDao(dao);
+
+        before((req, res) ->{
+            if(req.cookie("password")!=null){
+                req.attribute("password", req.cookie("password"));
+            }
+        });
+
+        before("/new", (req, res) ->{
+            if (req.attribute("password") != "admin"){
+                // set flash message here that the password is incorrect or has not been entered
+                res.redirect("/password");
+                halt();
+            }
+        });
+
+        before("/edit/:slug", (req, res) ->{
+            if (req.attribute("password") != "admin"){
+                // set flash message here that the password is incorrect or has not been entered
+                res.redirect("/password");
+                halt();
+            }
+        });
 
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
@@ -56,11 +76,6 @@ public class Main {
             return null;
         });
 
-        get("/detail", (req, res) -> {
-            Map<String, String> model = new HashMap<> ();
-            return new ModelAndView(model, "detail.hbs");
-        }, new HandlebarsTemplateEngine());
-
         get("/detail/:slug", (req, res) ->{
             Map<String, Object> model = new HashMap<>();
             model.put("entry", dao.findEntryBySlug(req.params("slug")));
@@ -77,26 +92,34 @@ public class Main {
             return null;
         });
 
-        get("/edit", (req, res) -> {
-            Map<String, String> model = new HashMap<> ();
-            return new ModelAndView(model, "edit.hbs");
-        }, new HandlebarsTemplateEngine());
-
         get("/edit/:slug", (req, res) -> {
             Map<String, Object> model = new HashMap<> ();
             model.put("entry", dao.findEntryBySlug(req.params("slug")));
             return new ModelAndView(model, "edit.hbs");
         }, new HandlebarsTemplateEngine());
 
-        //TODO: Remove initial blog entry and add the edited one?
-//        post("/edit", (req, res) ->{
-//            String title = req.queryParams("title");
-//            String body = req.queryParams("entry");
-//            BlogEntry blogEntry = new BlogEntry(title, body);
-//            dao.addEntry(blogEntry);
-//            res.redirect("/");
-//            return null;
-//        });
+        post("/edit/:slug", (req, res) ->{
+            String title = req.queryParams("title");
+            String body = req.queryParams("entry");
+            BlogEntry entry = dao.findEntryBySlug(req.params("slug"));
+            entry.setTitle(title);
+            entry.setBody(body);
+            res.redirect("/detail/" + req.params("slug"));
+            return null;
+        });
+
+        get("/password", (req, res) ->{
+            Map<String, String> model = new HashMap<>();
+            return new ModelAndView(model, "password.hbs");
+        }, new HandlebarsTemplateEngine());
+
+        post("/password", (req, res) -> {
+            Map<String, String> model = new HashMap<>();
+            String password = req.queryParams("password");
+            res.cookie("password", password);
+            res.redirect("/");
+            return null;
+        });
 
     }
 

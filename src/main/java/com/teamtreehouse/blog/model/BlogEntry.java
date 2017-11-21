@@ -32,9 +32,13 @@ public class BlogEntry {
         return title;
     }
 
+    public void setTitle(String title){this.title = title; }
+
     public String getBody(){
         return body;
     }
+
+    public void setBody(String body){ this.body = body; }
 
     public String getTime() { return time;}
 
@@ -49,9 +53,6 @@ public class BlogEntry {
     public boolean addComment(Comment comment) {
         return comments.add(comment);
     }
-
-    //TODO: Placeholder in case we need to return the total number of comments for a blog post
-
 
     @Override
     public boolean equals(Object o) {
