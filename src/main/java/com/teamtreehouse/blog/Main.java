@@ -36,10 +36,15 @@ public class Main {
         });
 
         before("/new", (req, res) ->{
-            if (req.attribute("password") != "admin"){
+            if (req.attribute("password")==null){
                 // set flash message here that the password is incorrect or has not been entered
                 res.redirect("/password");
                 halt();
+            }
+
+            if(!req.attribute("password").equals("admin")){
+                System.out.println("You have entered the wrong password");
+                res.redirect("/password");
             }
         });
 
