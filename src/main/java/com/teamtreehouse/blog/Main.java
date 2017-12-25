@@ -49,7 +49,12 @@ public class Main {
         });
 
         before("/edit/:slug", (req, res) ->{
-            if (req.attribute("password") != "admin"){
+
+            if(req.attribute("password")==null){
+                res.redirect("/password");
+                halt();
+            }
+            if (!req.attribute("password").equals("admin")){
                 // set flash message here that the password is incorrect or has not been entered
                 res.redirect("/password");
                 halt();
@@ -110,6 +115,13 @@ public class Main {
             entry.setTitle(title);
             entry.setBody(body);
             res.redirect("/detail/" + req.params("slug"));
+            return null;
+        });
+
+        post("/delete/:slug", (req, res) ->{
+            BlogEntry entry = dao.findEntryBySlug(req.params("slug"));
+            dao.deleteEntry(entry);
+            res.redirect("/");
             return null;
         });
 

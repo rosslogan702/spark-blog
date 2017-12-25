@@ -23,6 +23,11 @@ public class SimpleBlogDao implements BlogDao {
     }
 
     @Override
+    public boolean deleteEntry(BlogEntry blogEntry){
+        return blogEntries.remove(blogEntry);
+    }
+
+    @Override
     public List<BlogEntry> findAllEntries() {
         return new ArrayList<>(blogEntries);
     }
