@@ -5,10 +5,9 @@ import com.teamtreehouse.blog.model.BlogEntry;
 import com.teamtreehouse.blog.model.Comment;
 import spark.ModelAndView;
 import spark.Request;
+import spark.Response;
 import spark.template.handlebars.HandlebarsTemplateEngine;
-
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +20,11 @@ import static spark.Spark.*;
 public class Main {
 
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    private static String reqURI = "";
+    private static final String FLASH_MESSAGE_KEY = "flash_message";
+
 
     public static void main(String[] args) {
-
         staticFileLocation("/public");
         SimpleBlogDao dao = new SimpleBlogDao();
         //Pre-populated dao for testing and for project where we need at least 3 projects
@@ -36,29 +37,11 @@ public class Main {
         });
 
         before("/new", (req, res) ->{
-            if (req.attribute("password")==null){
-                // set flash message here that the password is incorrect or has not been entered
-                res.redirect("/password");
-                halt();
-            }
-
-            if(!req.attribute("password").equals("admin")){
-                System.out.println("You have entered the wrong password");
-                res.redirect("/password");
-            }
+            checkForPasswordAndRedirect(req, res);
         });
 
         before("/edit/:slug", (req, res) ->{
-
-            if(req.attribute("password")==null){
-                res.redirect("/password");
-                halt();
-            }
-            if (!req.attribute("password").equals("admin")){
-                // set flash message here that the password is incorrect or has not been entered
-                res.redirect("/password");
-                halt();
-            }
+            checkForPasswordAndRedirect(req, res);
         });
 
         get("/", (req, res) -> {
@@ -127,6 +110,7 @@ public class Main {
 
         get("/password", (req, res) ->{
             Map<String, String> model = new HashMap<>();
+            model.put("flashMessage", captureFlashMessage(req));
             return new ModelAndView(model, "password.hbs");
         }, new HandlebarsTemplateEngine());
 
@@ -134,10 +118,45 @@ public class Main {
             Map<String, String> model = new HashMap<>();
             String password = req.queryParams("password");
             res.cookie("password", password);
-            res.redirect("/");
+            res.redirect(reqURI);
             return null;
         });
 
+    }
+
+    private static void setFlashMessage(Request req,String message) {
+        req.session().attribute(FLASH_MESSAGE_KEY,message);
+    }
+    private static String getFlashMessage(Request req) {
+        if(req.session(false) == null) {
+            return null;
+        }
+        if(!req.session().attributes().contains(FLASH_MESSAGE_KEY)) {
+            return null;
+        }
+        return (String) req.session().attribute(FLASH_MESSAGE_KEY);
+    }
+    private static String captureFlashMessage(Request req) {
+        String message = getFlashMessage(req);
+        if(message !=null) {
+            req.session().removeAttribute(FLASH_MESSAGE_KEY);
+        }
+        return message;
+    }
+
+    private static void checkForPasswordAndRedirect(Request req, Response res) {
+        reqURI = req.uri();
+        if (req.attribute("password")==null){
+            setFlashMessage(req,"Please enter the password to sign-in");
+            res.redirect("/password");
+            halt();
+        }
+
+        if(!req.attribute("password").equals("admin")){
+            setFlashMessage(req,"Incorrect password entered, please re-enter password to sign-in");
+            res.redirect("/password");
+            halt();
+        }
     }
 
     private static void prepopulateDao(SimpleBlogDao dao) {
