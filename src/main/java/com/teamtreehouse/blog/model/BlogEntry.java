@@ -18,6 +18,7 @@ public class BlogEntry {
     private String time;
     //TODO: Add in the author?
     private String slug;
+    private Set<String> tags;
 
     public BlogEntry(String title, String body){
         this.title = title;
@@ -26,6 +27,7 @@ public class BlogEntry {
         time = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm").format(LocalDateTime.now());
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
+        tags = new HashSet<>();
     }
 
     public String getTitle() {
@@ -53,6 +55,10 @@ public class BlogEntry {
     public boolean addComment(Comment comment) {
         return comments.add(comment);
     }
+
+    public Set<String> getTags() { return new HashSet<>(tags); }
+
+    public boolean addTags(String tag){ return tags.add(tag); }
 
     @Override
     public boolean equals(Object o) {
