@@ -10,24 +10,25 @@ import com.github.slugify.Slugify;
 /**
  * Created by Ross on 09/11/2017.
  */
-public class BlogEntry {
+public class BlogEntry implements Comparable<BlogEntry> {
 
     private String title;
     private String body;
     private LinkedHashSet<Comment> comments;
     private String time;
-    //TODO: Add in the author?
     private String slug;
     private Set<String> tags;
+    private String tagList;
 
-    public BlogEntry(String title, String body){
+    public BlogEntry(String title, String body, Set<String> tags){
         this.title = title;
         this.body = body;
         comments = new LinkedHashSet<>();
         time = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm").format(LocalDateTime.now());
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
-        tags = new HashSet<>();
+        this.tags = tags;
+        this.tagList = "";
     }
 
     public String getTitle() {
@@ -48,6 +49,8 @@ public class BlogEntry {
         return slug;
     }
 
+    public String getTagList() { return tagList; }
+
     public List<Comment> getComments(){
         return new ArrayList<>(comments);
     }
@@ -56,7 +59,24 @@ public class BlogEntry {
         return comments.add(comment);
     }
 
+    public void setTags(Set<String> tags){
+        this.tags = tags;
+        this.tagList = getTagsString();
+    }
+
     public Set<String> getTags() { return new HashSet<>(tags); }
+
+    public String getTagsString() {
+        if (this.tags.isEmpty()) {
+            return "";
+        } else {
+            String tags = "";
+            for (String s : this.tags) {
+                tags += s + ",";
+            }
+            return tags.substring(0, tags.length()-1);
+        }
+    }
 
     public boolean addTags(String tag){ return tags.add(tag); }
 
@@ -76,5 +96,20 @@ public class BlogEntry {
         int result = title.hashCode();
         result = 31 * result + body.hashCode();
         return result;
+    }
+
+    @Override
+    public int compareTo(BlogEntry entry) {
+        return EntryComparators.UPDATED.compare(this, entry);
+    }
+
+    public static class EntryComparators {
+
+        public static Comparator<BlogEntry> UPDATED = new Comparator<BlogEntry>() {
+            @Override
+            public int compare(BlogEntry entry1, BlogEntry entry2) {
+                return entry2.time.compareTo(entry1.time);
+            }
+        };
     }
 }

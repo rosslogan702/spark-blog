@@ -8,8 +8,7 @@ import spark.Request;
 import spark.Response;
 import spark.template.handlebars.HandlebarsTemplateEngine;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static spark.Spark.*;
 
@@ -63,7 +62,12 @@ public class Main {
         post("/new", (req, res) ->{
             String title = req.queryParams("title");
             String body = req.queryParams("entry");
-            BlogEntry blogEntry = new BlogEntry(title, body);
+            String [] tagCSV = req.queryParams("tags").split(",");
+            Set<String> tags = new HashSet<>();
+            for(String tag: tagCSV){
+                tags.add(tag);
+            }
+            BlogEntry blogEntry = new BlogEntry(title, body, tags);
             dao.addEntry(blogEntry);
             res.redirect("/");
             return null;
@@ -87,16 +91,23 @@ public class Main {
 
         get("/edit/:slug", (req, res) -> {
             Map<String, Object> model = new HashMap<> ();
-            model.put("entry", dao.findEntryBySlug(req.params("slug")));
+            BlogEntry entry = dao.findEntryBySlug(req.params("slug"));
+            model.put("entry", entry);
             return new ModelAndView(model, "edit.hbs");
         }, new HandlebarsTemplateEngine());
 
         post("/edit/:slug", (req, res) ->{
             String title = req.queryParams("title");
             String body = req.queryParams("entry");
+            String [] tagCSV = req.queryParams("tags").split(",");
+            Set<String> tags = new LinkedHashSet<>();
+            for(String tag: tagCSV){
+                tags.add(tag.trim());
+            }
             BlogEntry entry = dao.findEntryBySlug(req.params("slug"));
             entry.setTitle(title);
             entry.setBody(body);
+            entry.setTags(tags);
             res.redirect("/detail/" + req.params("slug"));
             return null;
         });
@@ -168,7 +179,7 @@ public class Main {
         String commentOneName = "Joe Bloggs";
         String commentOneBody = "Cool place, not somewhere I had heard of before!";
         Comment blogOneComment = new Comment(commentOneName, commentOneBody);
-        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost);
+        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost, new HashSet<String>());
         blogEntryOne.addComment(blogOneComment);
 
         String blogEntryTwoTitle = "Great South Pond";
@@ -178,7 +189,7 @@ public class Main {
         String commentTwoName = "Jack Swanson";
         String commentTwoBody = "Interesting fact! Not something I was aware of before";
         Comment blogTwoComment = new Comment(commentTwoName, commentTwoBody);
-        BlogEntry blogEntryTwo = new BlogEntry(blogEntryTwoTitle, blogEntryTwoPost);
+        BlogEntry blogEntryTwo = new BlogEntry(blogEntryTwoTitle, blogEntryTwoPost, new HashSet<String>());
         blogEntryTwo.addComment(blogTwoComment);
 
         String blogEntryThreeTitle = "Chrysler Valiant (AP6)";
@@ -187,7 +198,7 @@ public class Main {
         String commentThreeName = "Melanie Clarkson";
         String commentThreeBody = "This is one of my favourite retro cars!";
         Comment blogThreeComment = new Comment(commentThreeName, commentThreeBody);
-        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost);
+        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost, new HashSet<String>());
         blogEntryThree.addComment(blogThreeComment);
 
         dao.addEntry(blogEntryOne);

@@ -6,6 +6,8 @@
             <input type="text" name="title" value="{{ entry.title }}" ><br>
             <label for="entry">Entry</label>
             <textarea rows="5" name="entry" >{{ entry.body }}</textarea>
+            <label for="tags"> Tags - Enter as Comma Separated Values</label>
+            <input type="text" name="tags" value="{{ entry.tagList }}"> <br>
             <input type="submit" value="Save Entry" class="button">
             <a href="/" class="button button-secondary">Cancel</a>
             <input type="submit" value="Delete Entry" class="button button-secondary"

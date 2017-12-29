@@ -4,6 +4,8 @@ import com.teamtreehouse.blog.NotFoundException;
 import com.teamtreehouse.blog.model.BlogEntry;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -29,7 +31,9 @@ public class SimpleBlogDao implements BlogDao {
 
     @Override
     public List<BlogEntry> findAllEntries() {
-        return new ArrayList<>(blogEntries);
+        ArrayList<BlogEntry> blogEntries = new ArrayList<>(this.blogEntries);
+        Collections.sort(blogEntries, BlogEntry.EntryComparators.UPDATED);
+        return blogEntries;
     }
 
     @Override
