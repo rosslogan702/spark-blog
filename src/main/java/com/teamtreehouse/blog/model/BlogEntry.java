@@ -1,6 +1,5 @@
 package com.teamtreehouse.blog.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -27,8 +26,7 @@ public class BlogEntry implements Comparable<BlogEntry> {
         time = DateTimeFormatter.ofPattern("dd-MMM-yyyy HH:mm").format(LocalDateTime.now());
         Slugify slugify = new Slugify();
         slug = slugify.slugify(title);
-        this.tags = tags;
-        this.tagList = "";
+        setTags(tags);
     }
 
     public String getTitle() {
@@ -66,7 +64,7 @@ public class BlogEntry implements Comparable<BlogEntry> {
 
     public Set<String> getTags() { return new HashSet<>(tags); }
 
-    public String getTagsString() {
+    private String getTagsString() {
         if (this.tags.isEmpty()) {
             return "";
         } else {
@@ -77,8 +75,6 @@ public class BlogEntry implements Comparable<BlogEntry> {
             return tags.substring(0, tags.length()-1);
         }
     }
-
-    public boolean addTags(String tag){ return tags.add(tag); }
 
     @Override
     public boolean equals(Object o) {
@@ -105,11 +101,6 @@ public class BlogEntry implements Comparable<BlogEntry> {
 
     public static class EntryComparators {
 
-        public static Comparator<BlogEntry> UPDATED = new Comparator<BlogEntry>() {
-            @Override
-            public int compare(BlogEntry entry1, BlogEntry entry2) {
-                return entry2.time.compareTo(entry1.time);
-            }
-        };
+        public static Comparator<BlogEntry> UPDATED = (entry1, entry2) -> entry2.time.compareTo(entry1.time);
     }
 }

@@ -4,13 +4,11 @@
             <h1>{{ entry.title }}</h1>
             <time>{{ entry.time }}</time>
             <div class="entry">
-                <p> {{ entry.body}}</p>
+                <p> {{ entry.body }}</p>
                 <p><a class="link" href="/edit/{{ entry.slug }}">Edit Entry</a></p>
             </div>
         </article>
     </div>
-    </div>
-    </section>
     <section class="entry-comments">
         <div class="container">
             <h2>Comments</h2>
@@ -30,6 +28,8 @@
                     <input type="submit" value="Post Comment" class="button">
                 </form>
             </div>
+        </div>
+    </section>
 {{/partial}}
 
 {{> base.hbs}}

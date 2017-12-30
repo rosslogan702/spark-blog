@@ -70,8 +70,8 @@ footer a {
 }
 .button.button-secondary {
 	background: transparent;
-	border-color: #000;
-	color: #000;
+	border-color: #6666ff;
+	color: #6666ff;
 }
 .button.button-round {
 	border-radius: 100px;
@@ -98,9 +98,11 @@ h3 {
 h1 {
 	font-size: 44px;
 	margin-bottom: 12px;
+	color: #6666ff
 }
 h2 {
 	font-size: 28px;
+	color: #6666ff
 }
 h3 {
 	font-size: 28px;
@@ -188,6 +190,7 @@ a.link {
 .entry-comments h2 {
 	border-bottom: 1px solid #c1c1c1;
 	padding-bottom: 35px;
+	color: #6666ff
 }
 .comment {
 	border-top: 1px solid #c1c1c1;
@@ -263,7 +266,7 @@ input[type=submit] {
 }
 
  #flash-message{
-        background-color: #2c89ba;
+        background-color: #ff4c4c;
         border-radius: 5px;
         color: #fff;
         display: block;

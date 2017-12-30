@@ -26,7 +26,6 @@ public class Main {
     public static void main(String[] args) {
         staticFileLocation("/public");
         SimpleBlogDao dao = new SimpleBlogDao();
-        //Pre-populated dao for testing and for project where we need at least 3 projects
         prepopulateDao(dao);
 
         before((req, res) ->{
@@ -35,13 +34,9 @@ public class Main {
             }
         });
 
-        before("/new", (req, res) ->{
-            checkForPasswordAndRedirect(req, res);
-        });
+        before("/new", (req, res) -> checkForPasswordAndRedirect(req, res));
 
-        before("/edit/:slug", (req, res) ->{
-            checkForPasswordAndRedirect(req, res);
-        });
+        before("/edit/:slug", (req, res) -> checkForPasswordAndRedirect(req, res));
 
         get("/", (req, res) -> {
             Map<String, Object> model = new HashMap<>();
@@ -179,7 +174,7 @@ public class Main {
         String commentOneName = "Joe Bloggs";
         String commentOneBody = "Cool place, not somewhere I had heard of before!";
         Comment blogOneComment = new Comment(commentOneName, commentOneBody);
-        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost, new HashSet<String>());
+        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost, new HashSet<>());
         blogEntryOne.addComment(blogOneComment);
 
         String blogEntryTwoTitle = "Great South Pond";
@@ -189,7 +184,7 @@ public class Main {
         String commentTwoName = "Jack Swanson";
         String commentTwoBody = "Interesting fact! Not something I was aware of before";
         Comment blogTwoComment = new Comment(commentTwoName, commentTwoBody);
-        BlogEntry blogEntryTwo = new BlogEntry(blogEntryTwoTitle, blogEntryTwoPost, new HashSet<String>());
+        BlogEntry blogEntryTwo = new BlogEntry(blogEntryTwoTitle, blogEntryTwoPost, new HashSet<>());
         blogEntryTwo.addComment(blogTwoComment);
 
         String blogEntryThreeTitle = "Chrysler Valiant (AP6)";
@@ -198,7 +193,7 @@ public class Main {
         String commentThreeName = "Melanie Clarkson";
         String commentThreeBody = "This is one of my favourite retro cars!";
         Comment blogThreeComment = new Comment(commentThreeName, commentThreeBody);
-        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost, new HashSet<String>());
+        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost, new HashSet<>());
         blogEntryThree.addComment(blogThreeComment);
 
         dao.addEntry(blogEntryOne);
