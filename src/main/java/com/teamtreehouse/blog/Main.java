@@ -174,7 +174,8 @@ public class Main {
         String commentOneName = "Joe Bloggs";
         String commentOneBody = "Cool place, not somewhere I had heard of before!";
         Comment blogOneComment = new Comment(commentOneName, commentOneBody);
-        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost, new HashSet<>());
+        Set<String> blogEntryOneTags = new HashSet<>(Arrays.asList("Island", "Discovery", "Investigation"));
+        BlogEntry blogEntryOne = new BlogEntry(blogEntryOneTitle, blogEntryOnePost, blogEntryOneTags);
         blogEntryOne.addComment(blogOneComment);
 
         String blogEntryTwoTitle = "Great South Pond";
@@ -193,7 +194,8 @@ public class Main {
         String commentThreeName = "Melanie Clarkson";
         String commentThreeBody = "This is one of my favourite retro cars!";
         Comment blogThreeComment = new Comment(commentThreeName, commentThreeBody);
-        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost, new HashSet<>());
+        Set<String> blogEntryThreeTags = new HashSet<>(Arrays.asList("Cars", "Chrysler"));
+        BlogEntry blogEntryThree = new BlogEntry(blogEntryThreeTitle, blogEntryThreePost, blogEntryThreeTags);
         blogEntryThree.addComment(blogThreeComment);
 
         dao.addEntry(blogEntryOne);
